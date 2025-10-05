@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventario</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #b7e2ff 0%, #376a91 100%);
+            min-height: 100vh;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: #f5f9fc;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h2 {
+            text-align: center;
+            color: #376a91;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #376a91;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #b7e2ff;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #376a91;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #376a91;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #2c5573;
+        }
+
+        .top-bar {
+            background: #f5f9fc;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .top-bar-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .top-bar-right {
+            display: flex;
+            gap: 15px;
+        }
+
+        .top-bar.empty {
+            min-height: 70px;
+        }
+
+        .top-bar-btn {
+            padding: 10px 20px;
+            background: #376a91;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .top-bar-btn:hover {
+            background: #2c5573;
+        }
+
+        .top-bar-btn.secondary {
+            background: #6c757d;
+        }
+
+        .top-bar-btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        .dashboard {
+            padding: 40px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .welcome {
+            background: #f5f9fc;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .welcome h1 {
+            color: #376a91;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-btn {
+            padding: 30px;
+            background: linear-gradient(135deg, #376a91 0%, #2c5573 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .dashboard-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .search-section {
+            background: #f5f9fc;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            background: #376a91;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .action-btn:hover {
+            background: #2c5573;
+        }
+
+        .action-btn.success {
+            background: #28a745;
+        }
+
+        .action-btn.success:hover {
+            background: #218838;
+        }
+
+        .action-btn.warning {
+            background: #376a91;
+        }
+
+        .action-btn.warning:hover {
+            background: #2c5573;
+        }
+
+        .action-btn.danger {
+            background: #dc3545;
+        }
+
+        .action-btn.danger:hover {
+            background: #c82333;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #b7e2ff;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #376a91;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: #f5f9fc;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #376a91;
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #b7e2ff;
+            font-size: 14px;
+            color: #376a91;
+        }
+
+        tbody tr {
+            background: white;
+        }
+
+        tbody tr:hover {
+            background: #e8f4fa;
+        }
+
+        .action-cell {
+            color: #376a91;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .action-cell:hover {
+            text-decoration: underline;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #f5f9fc;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #376a91;
+            font-size: 24px;
+        }
+
+        .modal-field {
+            margin-bottom: 15px;
+        }
+
+        .modal-field label {
+            display: block;
+            margin-bottom: 5px;
+            color: #376a91;
+            font-weight: 500;
+        }
+
+        .modal-field input,
+        .modal-field select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #b7e2ff;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .modal-field input:focus,
+        .modal-field select:focus {
+            outline: none;
+            border-color: #376a91;
+        }
+
+        .modal-field.readonly input {
+            background: #e8f4fa;
+            color: #376a91;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .modal-btn.primary {
+            background: #376a91;
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            background: #2c5573;
+        }
+
+        .modal-btn.secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .modal-btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="page active">
+        <div class="top-bar empty">
+            <div class="top-bar-left">
+                <img src="assets/logo.png" alt="Logo" class="top-bar-logo">
+            </div>
+            <div class="top-bar-right"></div>
+        </div>
+        <div class="login-container">
+            <div class="login-box">
+                <h2>Sistema de Inventario</h2>
+                <form>
+                    <div class="form-group">
+                        <label>Usuario</label>
+                        <input type="text" placeholder="Ingrese su usuario">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" placeholder="Ingrese su contraseña">
+                    </div>
+                    <button type="button" class="btn" onclick="showDashboard()">Ingresar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboardPage" class="page">
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <img src="assets/logo.png" alt="Logo" class="top-bar-logo">
+            </div>
+            <div class="top-bar-right">
+                <button class="top-bar-btn" onclick="showLogin()">Cerrar Sesión</button>
+            </div>
+        </div>
+        <div class="dashboard">
+            <div class="welcome">
+                <h1>¡Bienvenido Juan Pérez!</h1>
+                <div class="dashboard-buttons">
+                    <button class="dashboard-btn" onclick="showSearch()">Búsqueda</button>
+                    <button class="dashboard-btn" onclick="showAddInventory()">Agregar Inventario</button>
+                    <button class="dashboard-btn" onclick="showRegisterOutput()">Registrar Salida</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEARCH PAGE -->
+    <div id="searchPage" class="page">
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <img src="assets/logo.png" alt="Logo" class="top-bar-logo">
+            </div>
+            <div class="top-bar-right">
+                <button class="top-bar-btn secondary" onclick="showDashboard()">Inicio</button>
+                <button class="top-bar-btn" onclick="showLogin()">Cerrar Sesión</button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="search-section">
+                <div class="action-buttons">
+                    <button class="action-btn success" onclick="showAddInventory()">Agregar</button>
+                    <button class="action-btn warning" onclick="showRegisterOutput()">Registrar Salida</button>
+                    <button class="action-btn" onclick="showEditModal()">Editar</button>
+                </div>
+                <input type="text" class="search-bar" placeholder="Ingrese id, nombre, categoría o proveedor del artículo">
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Proveedor</th>
+                            <th>Stock</th>
+                            <th>Stock Mínimo</th>
+                            <th>Precio</th>
+                            <th>Última Actualización</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>Laptop Dell Inspiron</td>
+                            <td>Electrónica</td>
+                            <td>Dell Inc.</td>
+                            <td>25</td>
+                            <td>10</td>
+                            <td>$850.00</td>
+                            <td>2025-10-01</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Mouse Logitech MX</td>
+                            <td>Periféricos</td>
+                            <td>Logitech</td>
+                            <td>50</td>
+                            <td>20</td>
+                            <td>$45.00</td>
+                            <td>2025-09-28</td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Teclado Mecánico RGB</td>
+                            <td>Periféricos</td>
+                            <td>Corsair</td>
+                            <td>15</td>
+                            <td>10</td>
+                            <td>$120.00</td>
+                            <td>2025-10-03</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD INVENTORY PAGE -->
+    <div id="addInventoryPage" class="page">
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <img src="assets/logo.png" alt="Logo" class="top-bar-logo">
+            </div>
+            <div class="top-bar-right">
+                <button class="top-bar-btn secondary" onclick="showDashboard()">Inicio</button>
+                <button class="top-bar-btn" onclick="showLogin()">Cerrar Sesión</button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="search-section">
+                <div class="action-buttons">
+                    <button class="action-btn success" onclick="showNewItemModal()">Nuevo Item</button>
+                </div>
+                <input type="text" class="search-bar" placeholder="Ingrese id, nombre, categoría o proveedor del artículo">
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Proveedor</th>
+                            <th>Stock</th>
+                            <th>Precio</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>Laptop Dell Inspiron</td>
+                            <td>Electrónica</td>
+                            <td>Dell Inc.</td>
+                            <td>25</td>
+                            <td>$850.00</td>
+                            <td class="action-cell" onclick="showAddStockModal()">Agregar Stock</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Mouse Logitech MX</td>
+                            <td>Periféricos</td>
+                            <td>Logitech</td>
+                            <td>50</td>
+                            <td>$45.00</td>
+                            <td class="action-cell" onclick="showAddStockModal()">Agregar Stock</td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Teclado Mecánico RGB</td>
+                            <td>Periféricos</td>
+                            <td>Corsair</td>
+                            <td>15</td>
+                            <td>$120.00</td>
+                            <td class="action-cell" onclick="showAddStockModal()">Agregar Stock</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTER OUTPUT PAGE -->
+    <div id="registerOutputPage" class="page">
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <img src="assets/logo.png" alt="Logo" class="top-bar-logo">
+            </div>
+            <div class="top-bar-right">
+                <button class="top-bar-btn secondary" onclick="showDashboard()">Inicio</button>
+                <button class="top-bar-btn" onclick="showLogin()">Cerrar Sesión</button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="search-section">
+                <div class="action-buttons">
+                    <button class="action-btn danger" onclick="showDeleteItemModal()">Eliminar Item</button>
+                </div>
+                <input type="text" class="search-bar" placeholder="Ingrese id, nombre, categoría o proveedor del artículo">
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Proveedor</th>
+                            <th>Stock</th>
+                            <th>Precio</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>Laptop Dell Inspiron</td>
+                            <td>Electrónica</td>
+                            <td>Dell Inc.</td>
+                            <td>25</td>
+                            <td>$850.00</td>
+                            <td class="action-cell" onclick="showUpdateStockModal()">Actualizar Stock</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Mouse Logitech MX</td>
+                            <td>Periféricos</td>
+                            <td>Logitech</td>
+                            <td>50</td>
+                            <td>$45.00</td>
+                            <td class="action-cell" onclick="showUpdateStockModal()">Actualizar Stock</td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Teclado Mecánico RGB</td>
+                            <td>Periféricos</td>
+                            <td>Corsair</td>
+                            <td>15</td>
+                            <td>$120.00</td>
+                            <td class="action-cell" onclick="showUpdateStockModal()">Actualizar Stock</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    
+    <!-- Add Stock Modal -->
+    <div id="addStockModal" class="modal">
+        <div class="modal-content">
+            <h3>Agregar Stock</h3>
+            <div class="modal-field readonly">
+                <label>Producto:</label>
+                <input type="text" value="Laptop Dell Inspiron" readonly>
+            </div>
+            <div class="modal-field readonly">
+                <label>Stock:</label>
+                <input type="text" value="25 unidades" readonly>
+            </div>
+            <div class="modal-field">
+                <label>Agregar Stock:</label>
+                <input type="number" placeholder="Unidades a agregar">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary">Guardar</button>
+                <button class="modal-btn secondary" onclick="closeModal('addStockModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Stock Modal -->
+    <div id="updateStockModal" class="modal">
+        <div class="modal-content">
+            <h3>Actualizar Stock</h3>
+            <div class="modal-field readonly">
+                <label>Producto:</label>
+                <input type="text" value="Laptop Dell Inspiron" readonly>
+            </div>
+            <div class="modal-field readonly">
+                <label>Stock:</label>
+                <input type="text" value="25 unidades" readonly>
+            </div>
+            <div class="modal-field">
+                <label>Unidades a Descontar:</label>
+                <input type="number" placeholder="Unidades vendidas/usadas">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary">Guardar</button>
+                <button class="modal-btn secondary" onclick="closeModal('updateStockModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Item Modal -->
+    <div id="newItemModal" class="modal">
+        <div class="modal-content">
+            <h3>Nuevo Item</h3>
+            <div class="modal-field">
+                <label>ID:</label>
+                <input type="text" placeholder="Ingrese ID del producto">
+            </div>
+            <div class="modal-field">
+                <label>Nombre:</label>
+                <input type="text" placeholder="Ingrese nombre del producto">
+            </div>
+            <div class="modal-field">
+                <label>Categoría:</label>
+                <input type="text" placeholder="Ingrese categoría">
+            </div>
+            <div class="modal-field">
+                <label>Proveedor:</label>
+                <input type="text" placeholder="Ingrese proveedor">
+            </div>
+            <div class="modal-field">
+                <label>Stock:</label>
+                <input type="number" placeholder="Ingrese stock inicial">
+            </div>
+            <div class="modal-field">
+                <label>Stock Mínimo:</label>
+                <input type="number" placeholder="Ingrese stock mínimo">
+            </div>
+            <div class="modal-field">
+                <label>Precio:</label>
+                <input type="number" step="0.01" placeholder="Ingrese precio">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary">Guardar</button>
+                <button class="modal-btn secondary" onclick="closeModal('newItemModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Item Modal -->
+    <div id="deleteItemModal" class="modal">
+        <div class="modal-content">
+            <h3>Eliminar Item</h3>
+            <input type="text" class="search-bar" placeholder="Ingrese id, nombre, categoría o proveedor del artículo">
+            <div class="modal-field">
+                <label>Seleccionar artículo:</label>
+                <select>
+                    <option>001 - Laptop Dell Inspiron</option>
+                    <option>002 - Mouse Logitech MX</option>
+                    <option>003 - Teclado Mecánico RGB</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" style="background: #dc3545;">Eliminar Artículo</button>
+                <button class="modal-btn secondary" onclick="closeModal('deleteItemModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>Editar Artículo</h3>
+            <input type="text" class="search-bar" placeholder="Ingrese id, nombre, categoría o proveedor del artículo">
+            <div class="modal-field">
+                <label>ID:</label>
+                <input type="text" value="001">
+            </div>
+            <div class="modal-field">
+                <label>Nombre:</label>
+                <input type="text" value="Laptop Dell Inspiron">
+            </div>
+            <div class="modal-field">
+                <label>Categoría:</label>
+                <input type="text" value="Electrónica">
+            </div>
+            <div class="modal-field">
+                <label>Proveedor:</label>
+                <input type="text" value="Dell Inc.">
+            </div>
+            <div class="modal-field">
+                <label>Precio:</label>
+                <input type="number" step="0.01" value="850.00">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary">Editar Artículo</button>
+                <button class="modal-btn secondary" onclick="closeModal('editModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function showLogin() {
+            showPage('loginPage');
+        }
+
+        function showDashboard() {
+            showPage('dashboardPage');
+        }
+
+        function showSearch() {
+            showPage('searchPage');
+        }
+
+        function showAddInventory() {
+            showPage('addInventoryPage');
+        }
+
+        function showRegisterOutput() {
+            showPage('registerOutputPage');
+        }
+
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showAddStockModal() {
+            showModal('addStockModal');
+        }
+
+        function showUpdateStockModal() {
+            showModal('updateStockModal');
+        }
+
+        function showNewItemModal() {
+            showModal('newItemModal');
+        }
+
+        function showDeleteItemModal() {
+            showModal('deleteItemModal');
+        }
+
+        function showEditModal() {
+            showModal('editModal');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
